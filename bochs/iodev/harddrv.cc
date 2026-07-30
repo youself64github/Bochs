@@ -3859,23 +3859,23 @@ Bit32u bx_hard_drive_c::get_transfer_delay_usec(Bit8u channel, bool is_write, Bi
   sprintf(ata_name, "ata.%d.%s", channel, BX_SLAVE_SELECTED(channel) ? "slave" : "master");
   bx_list_c *base = (bx_list_c*) SIM->get_param(ata_name);
 
-  Bit32u iops = 0, mbps = 0;
+  Bit32u iops = 0, kbps = 0;
   switch (SIM->get_param_enum("speed", base)->get()) {
     case BX_ATA_SPEED_4200RPM:
       iops = 55;
-      mbps = is_write ? 35 : 40;
+      kbps = is_write ? 35000 : 40000;
       break;
     case BX_ATA_SPEED_5400RPM:
       iops = 75;
-      mbps = is_write ? 60 : 70;
+      kbps = is_write ? 60000 : 70000;
       break;
     case BX_ATA_SPEED_7200RPM:
       iops = 100;
-      mbps = is_write ? 100 : 120;
+      kbps = is_write ? 100000 : 120000;
       break;
     case BX_ATA_SPEED_CUSTOM:
       iops = SIM->get_param_num("iops", base)->get();
-      mbps = SIM->get_param_num(is_write ? "write_mbps" : "read_mbps", base)->get();
+      kbps = SIM->get_param_num(is_write ? "write_kbps" : "read_kbps", base)->get();
       break;
     case BX_ATA_SPEED_NATIVE:
     default:
@@ -3886,8 +3886,8 @@ Bit32u bx_hard_drive_c::get_transfer_delay_usec(Bit8u channel, bool is_write, Bi
   if (iops > 0) {
     delay = 1000000 / iops;
   }
-  if (mbps > 0) {
-    Bit64u throughput_delay = ((Bit64u)byte_count * 1000000) / ((Bit64u)mbps * 1024 * 1024);
+  if (kbps > 0) {
+    Bit64u throughput_delay = ((Bit64u)byte_count * 1000000000) / ((Bit64u)kbps * 1024 * 1024);
     if (throughput_delay > delay) {
       delay = throughput_delay;
     }
