@@ -772,11 +772,11 @@ void bx_init_options()
   
   bx_param_num_c *mem_frequency = new bx_param_num_c(ram,
       "frequency",
-      "Memory speed frequency (megahertz)",
-      "RAM speed frequency in MHz used to add emulated memory access latency (1 disables neither RAM nor ROM; 8400 is the fastest setting)",
-      1, 8400,
-      8400);
-  mem_frequency->set_ask_format("Enter memory speed frequency (MHz): [%d] ");
+      "Memory speed frequency (kilohertz)",
+      "RAM speed frequency in KHz used to add emulated memory access latency (1 disables neither RAM nor ROM; 8400 is the fastest setting)",
+      1, 8400000,
+      8400000);
+  mem_frequency->set_ask_format("Enter memory speed frequency (KHz): [%d] ");
   
   path = new bx_param_filename_c(rom,
       "file",
