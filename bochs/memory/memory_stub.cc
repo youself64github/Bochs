@@ -181,6 +181,16 @@ Bit8u* BX_MEMORY_STUB_C::get_vector(bx_phy_address addr)
   return BX_MEM_THIS blocks[block] + (Bit32u)(addr & (BX_MEM_THIS block_size-1));
 }
 
+void BX_MEMORY_STUB_C::set_access_latency(Bit32u frequency_mhz, Bit64u ips)
+{
+  if (frequency_mhz < 1) frequency_mhz = 1;
+  if (frequency_mhz > 8400) frequency_mhz = 8400;
+  BX_MEM_THIS frequency_mhz = frequency_mhz;
+  BX_MEM_THIS latency_ticks = (Bit32u) (ips / (Bit64u(frequency_mhz) * 1000000));
+  BX_INFO(("memory speed frequency = %u MHz, latency = %u CPU ticks per RAM access",
+      BX_MEM_THIS frequency_mhz, BX_MEM_THIS latency_ticks));
+}
+
 void BX_MEMORY_STUB_C::consume_access_latency(void)
 {
   if (BX_MEM_THIS latency_ticks != 0) {
