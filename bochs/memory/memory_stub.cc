@@ -55,7 +55,7 @@ BX_MEMORY_STUB_C::BX_MEMORY_STUB_C()
   len    = 0;
   used_blocks = 0;
   allocated   = 0;
-  frequency_khz = 8400000;
+  frequency_hz = 8400000;
   latency_ticks = 0;
 
 #if BX_LARGE_RAMFILE
@@ -107,7 +107,7 @@ Bit8u* BX_MEMORY_STUB_C::alloc_vector_aligned(Bit64u bytes, Bit64u alignment)
   return vector;
 }
 
-void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_khz, Bit64u ips)
+void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_hz, Bit64u ips)
 {
   // accept only memory size which is multiply of 1M
   BX_ASSERT((host & 0xfffff) == 0);
@@ -130,12 +130,12 @@ void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size,
 
   BX_MEM_THIS len = guest;
   BX_MEM_THIS allocated = host;
-  if (frequency_khz < 1) frequency_khz = 1;
-  if (frequency_khz > 8400000) frequency_khz = 8400000;
-  BX_MEM_THIS frequency_khz = frequency_khz;
-  BX_MEM_THIS latency_ticks = (Bit32u) (ips / (Bit64u(frequency_khz) * 1000));
-  BX_INFO(("memory speed frequency = %u KHz, latency = %u CPU ticks per RAM access",
-      BX_MEM_THIS frequency_khz, BX_MEM_THIS latency_ticks));
+  if (frequency_hz < 1) frequency_hz = 1;
+  if (frequency_hz > 8400000000) frequency_hz = 8400000000;
+  BX_MEM_THIS frequency_hz = frequency_hz;
+  BX_MEM_THIS latency_ticks = (Bit32u) (ips / (Bit64u(frequency_hz) * 1));
+  BX_INFO(("memory speed frequency = %u Hz, latency = %u CPU ticks per RAM access",
+      BX_MEM_THIS frequency_hz, BX_MEM_THIS latency_ticks));
   BX_MEM_THIS rom   = &BX_MEM_THIS vector[host];
   BX_MEM_THIS bogus = &BX_MEM_THIS vector[host + BIOSROMSZ + EXROMSIZE];
   memset(BX_MEM_THIS rom, 0xff, BIOSROMSZ + EXROMSIZE + 4096);
