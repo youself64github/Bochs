@@ -146,7 +146,7 @@ static Bit64s bx_param_handler(bx_param_c *param, bool set, Bit64s val)
       }
     } else if (!strcmp(pname, BXPN_IPS)) {
       if (set && SIM->get_init_done()) {
-        bx_pc_system.set_ips((Bit32u)val);
+        bx_pc_system.set_ips((Bit64u)val);
         bx_virt_timer.set_ips((Bit64u)val);
       }
     } else {
@@ -681,9 +681,9 @@ void bx_init_options()
   bx_param_num_c *ips = new bx_param_num_c(cpu_param,
       "ips", "Emulated instructions per second (IPS)",
       "Emulated instructions per second, used to calibrate bochs emulated time with wall clock time.",
-      BX_MIN_IPS, BX_MAX_BIT32U,
+      BX_MIN_IPS, BX_MAX_BIT64S,
       50000000);
-  ips->set_ask_format("Type a new value for IPS: [%d] ");
+  ips->set_ask_format("Type a new value for IPS: [" FMT_LL "d] ");
   ips->set_handler(bx_param_handler);
 #if BX_SUPPORT_SMP
   new bx_param_num_c(cpu_param,
@@ -3622,12 +3622,12 @@ int bx_write_configuration(const char *rc, int overwrite)
   }
   fprintf(fp, "\n");
 #if BX_SUPPORT_SMP
-  fprintf(fp, "cpu: count=%u:%u:%u, ips=%u, quantum=%d, ",
+  fprintf(fp, "cpu: count=%u:%u:%u, ips=" FMT_LL "u, quantum=%d, ",
     SIM->get_param_num(BXPN_CPU_NPROCESSORS)->get(), SIM->get_param_num(BXPN_CPU_NCORES)->get(),
-    SIM->get_param_num(BXPN_CPU_NTHREADS)->get(), SIM->get_param_num(BXPN_IPS)->get(),
+    SIM->get_param_num(BXPN_CPU_NTHREADS)->get(), (Bit64u)SIM->get_param_num(BXPN_IPS)->get64(),
     SIM->get_param_num(BXPN_SMP_QUANTUM)->get());
 #else
-  fprintf(fp, "cpu: count=1, ips=%u, ", SIM->get_param_num(BXPN_IPS)->get());
+  fprintf(fp, "cpu: count=1, ips=" FMT_LL "u, ", (Bit64u)SIM->get_param_num(BXPN_IPS)->get64());
 #endif
   fprintf(fp, "model=%s, reset_on_triple_fault=%d, cpuid_limit_winnt=%d, cpuid_freq=%s",
     SIM->get_param_enum(BXPN_CPU_MODEL)->get_selected(),

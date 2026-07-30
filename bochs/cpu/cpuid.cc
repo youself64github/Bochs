@@ -1253,9 +1253,14 @@ void bx_cpuid_t::get_freq_leaf_15(cpuid_function_t *leaf, Bit32u eax, Bit32u ebx
     get_leaf(leaf, 0, 0, 0, 0);
     break;
   case BX_CPUID_FREQ_IPS:
-    // TSC frequency = core crystal clock * EBX/EAX: report the true tick rate
-    // as a crystal running at 'ips' Hz with a 1/1 ratio
-    get_leaf(leaf, 1, 1, (Bit32u) SIM->get_param_num(BXPN_IPS)->get(), 0);
+    {
+      // TSC frequency = core crystal clock * EBX/EAX: report the true tick rate
+      // as a crystal running at 'ips' Hz with a 1/1 ratio. CPUID leaf fields
+      // are 32-bit, so clamp the reported crystal clock if the IPS setting is
+      // too large to fit.
+      Bit64u ips = SIM->get_param_num(BXPN_IPS)->get64();
+      get_leaf(leaf, 1, 1, (ips > BX_MAX_BIT32U) ? BX_MAX_BIT32U : (Bit32u) ips, 0);
+    }
     break;
   case BX_CPUID_FREQ_HARDWARE:
   default:
@@ -1277,7 +1282,8 @@ void bx_cpuid_t::get_freq_leaf_16(cpuid_function_t *leaf, Bit32u eax, Bit32u ebx
   case BX_CPUID_FREQ_IPS:
     {
       // report base and max frequency of the emulated tick rate in MHz
-      Bit32u mhz = (Bit32u)((SIM->get_param_num(BXPN_IPS)->get() + 500000) / 1000000);
+      Bit64u mhz64 = (SIM->get_param_num(BXPN_IPS)->get64() + 500000) / 1000000;
+      Bit32u mhz = (mhz64 > BX_MAX_BIT32U) ? BX_MAX_BIT32U : (Bit32u) mhz64;
       get_leaf(leaf, mhz, mhz, 100, 0);
     }
     break;

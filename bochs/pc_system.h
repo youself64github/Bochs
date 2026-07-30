@@ -88,8 +88,8 @@ public:
   // Timer oriented public features
   // ==============================
 
-  void   initialize(Bit32u ips);
-  void   set_ips(Bit32u ips);
+  void   initialize(Bit64u ips);
+  void   set_ips(Bit64u ips);
   int    register_timer(void *this_ptr, bx_timer_handler_t, Bit32u useconds,
                          bool continuous, bool active, const char *id);
   bool unregisterTimer(unsigned timerID);
