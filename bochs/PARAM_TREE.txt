@@ -39,7 +39,6 @@ memory
       guest
       host
       block_size
-      frequency
     rom
       path
       address
