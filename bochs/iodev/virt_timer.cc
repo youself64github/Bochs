@@ -436,7 +436,17 @@ void bx_virt_timer_c::timer_handler(bool mode)
 {
   if (!mode) {
     Bit64u temp_final_time = bx_pc_system.time_usec();
-    BX_ASSERT(temp_final_time >= s[0].current_virtual_time);
+
+    // bx_pc_system.time_usec() is derived from the current IPS value.  When
+    // the IPS setting is increased at runtime, the same instruction count maps
+    // to a smaller system time value until enough more instructions execute.
+    // Keep virtual time monotonic by waiting for the rebased system time to
+    // catch up instead of asserting on this transient condition.
+    if (temp_final_time < s[0].current_virtual_time) {
+      bx_pc_system.activate_timer(s[0].system_timer_id, 1, 0);
+      return;
+    }
+
     temp_final_time -= s[0].current_virtual_time;
     while (temp_final_time) {
       Bit64u step = (temp_final_time < s[0].virtual_next_event_time) ? temp_final_time : s[0].virtual_next_event_time;
