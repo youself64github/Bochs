@@ -4146,6 +4146,10 @@ This defines the type and characteristics of all attached ata devices:
 <row> <entry> biosdetect </entry> <entry> type of biosdetection </entry> <entry> [auto | cmos | none] </entry> </row>
 <row> <entry> translation </entry> <entry> type of translation done by the BIOS (legacy int13), only for disks </entry> <entry> [none | lba | large | rechs | auto] </entry> </row>
 <row> <entry> model </entry> <entry> string returned by identify device ATA command </entry> </row>
+<row> <entry> speed </entry> <entry> optional hard disk speed limiter </entry> <entry> [native | 4200rpm | 5400rpm | 7200rpm | custom] </entry> </row>
+<row> <entry> iops </entry> <entry> custom speed I/O operations per second limit; 0 disables the IOPS component </entry> </row>
+<row> <entry> read_mbps </entry> <entry> custom speed read throughput limit in MB/s; 0 disables the read component </entry> </row>
+<row> <entry> write_mbps </entry> <entry> custom speed write throughput limit in MB/s; 0 disables the write component </entry> </row>
 <row> <entry> journal </entry> <entry> optional filename of the redolog for undoable, volatile and vvfat disks </entry> </row>
 </tbody>
 </tgroup>

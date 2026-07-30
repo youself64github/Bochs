@@ -1473,6 +1473,41 @@ void bx_init_options()
         "Generic 1234", 41);
       model->set_ask_format("Enter new model name: [%s]");
 
+      static const char *atadevice_speed_names[] = { "native", "4200rpm", "5400rpm", "7200rpm", "custom", NULL };
+
+      bx_param_enum_c *speed = new bx_param_enum_c(menu,
+        "speed",
+        "Disk speed limit",
+        "Hard disk speed profile used to throttle ATA disk I/O",
+        atadevice_speed_names,
+        BX_ATA_SPEED_LAST,
+        BX_ATA_SPEED_NATIVE);
+      speed->set_ask_format("Enter disk speed limit: [%s]");
+
+      bx_param_num_c *iops = new bx_param_num_c(menu,
+        "iops",
+        "Custom IOPS limit",
+        "Maximum disk I/O operations per second for custom speed (0 disables IOPS throttling)",
+        0, 10000000,
+        0);
+      iops->set_ask_format("Enter custom IOPS limit: [%d]");
+
+      bx_param_num_c *read_mbps = new bx_param_num_c(menu,
+        "read_mbps",
+        "Custom read MB/s limit",
+        "Maximum disk read throughput in MB/s for custom speed (0 disables read throughput throttling)",
+        0, 100000,
+        0);
+      read_mbps->set_ask_format("Enter custom read MB/s limit: [%d]");
+
+      bx_param_num_c *write_mbps = new bx_param_num_c(menu,
+        "write_mbps",
+        "Custom write MB/s limit",
+        "Maximum disk write throughput in MB/s for custom speed (0 disables write throughput throttling)",
+        0, 100000,
+        0);
+      write_mbps->set_ask_format("Enter custom write MB/s limit: [%d]");
+
       static const char *atadevice_biosdetect_names[] = { "auto", "cmos", "none", NULL };
 
       bx_param_enum_c *biosdetect = new bx_param_enum_c(menu,
@@ -1502,8 +1537,8 @@ void bx_init_options()
 
       // all items depend on the drive type
       type->set_dependent_list(menu->clone(), 0);
-      type->set_dependent_bitmap(BX_ATA_DEVICE_DISK, 0xfe6);
-      type->set_dependent_bitmap(BX_ATA_DEVICE_CDROM, 0x60a);
+      type->set_dependent_bitmap(BX_ATA_DEVICE_DISK, 0xfff6);
+      type->set_dependent_bitmap(BX_ATA_DEVICE_CDROM, 0x420a);
 
       type->set_handler(bx_param_handler);
     }

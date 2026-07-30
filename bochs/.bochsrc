@@ -693,7 +693,10 @@ ata3: enabled=0, ioaddr1=0x168, ioaddr2=0x360, irq=9
 # from the image must be exactly C*H*S*512.
 #
 # Default values are:
-#   mode=flat, biosdetect=auto, translation=auto, model="Generic 1234"
+#   mode=flat, biosdetect=auto, translation=auto, model="Generic 1234", speed=native
+#
+# Supported disk speed limits are native, 4200rpm, 5400rpm, 7200rpm and custom.
+# Custom limits use iops, read_mbps and write_mbps; zero disables each component.
 #
 # The biosdetect option has currently no effect on the bios
 #

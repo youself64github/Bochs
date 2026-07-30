@@ -220,6 +220,7 @@ private:
   BX_HD_SMF void set_signature(Bit8u channel, Bit8u id);
   BX_HD_SMF bool ide_read_sector(Bit8u channel, Bit8u *buffer, Bit32u buffer_size);
   BX_HD_SMF bool ide_write_sector(Bit8u channel, Bit8u *buffer, Bit32u buffer_size);
+  BX_HD_SMF Bit32u get_transfer_delay_usec(Bit8u channel, bool is_write, Bit32u byte_count);
   BX_HD_SMF void lba48_transform(controller_t *controller, bool lba48);
   BX_HD_SMF void start_seek(Bit8u channel);
 
@@ -251,6 +252,7 @@ private:
       Bit64s curr_lsector;
       Bit64s next_lsector;
       unsigned sect_size;
+      Bit32u last_transfer_delay_usec;
 
       Bit8u model_no[41];
       int statusbar_id;
