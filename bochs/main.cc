@@ -1218,7 +1218,7 @@ void bx_init_hardware()
 
   // all configuration has been read, now initialize everything.
 
-  bx_pc_system.initialize(SIM->get_param_num(BXPN_IPS)->get());
+  bx_pc_system.initialize((Bit64u)SIM->get_param_num(BXPN_IPS)->get64());
 
   if (SIM->get_param_string(BXPN_LOG_FILENAME)->getptr()[0]!='-') {
     BX_INFO(("using log file %s", SIM->get_param_string(BXPN_LOG_FILENAME)->getptr()));
@@ -1243,7 +1243,7 @@ void bx_init_hardware()
   if ((strlen(msrs_file) > 0) && strcmp(msrs_file, "none"))
     BX_INFO(("  load configurable MSRs from file \"%s\"", msrs_file));
 #endif
-  BX_INFO(("IPS is set to %u", (Bit32u) SIM->get_param_num(BXPN_IPS)->get()));
+  BX_INFO(("IPS is set to " FMT_LL "u", (Bit64u)SIM->get_param_num(BXPN_IPS)->get64()));
   BX_INFO(("CPU configuration"));
 #if BX_SUPPORT_SMP
   BX_INFO(("  SMP support: yes, quantum=%d", SIM->get_param_num(BXPN_SMP_QUANTUM)->get()));

@@ -59,7 +59,7 @@ bx_pc_system_c::bx_pc_system_c()
   numTimers = 1; // So far, only the nullTimer.
 }
 
-void bx_pc_system_c::initialize(Bit32u ips)
+void bx_pc_system_c::initialize(Bit64u ips)
 {
   ticksTotal = 0;
   timer[0].timeToFire = NullTimerInterval;
@@ -74,12 +74,12 @@ void bx_pc_system_c::initialize(Bit32u ips)
   set_ips(ips);
 }
 
-void bx_pc_system_c::set_ips(Bit32u ips)
+void bx_pc_system_c::set_ips(Bit64u ips)
 {
   // parameter 'ips' is the processor speed in Instructions-Per-Second
   m_ips = double(ips) / 1000000.0L;
 
-  BX_DEBUG(("ips = %u", (unsigned) ips));
+  BX_DEBUG(("ips = " FMT_LL "u", ips));
 }
 
 void bx_pc_system_c::set_HRQ(bool val)

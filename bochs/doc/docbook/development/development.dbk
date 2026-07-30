@@ -697,7 +697,7 @@ These are the public timer-related methods for timer control, driving the timers
 with the cpu and retrieving the internal time implemented in the <emphasis>bx_pc_system_c</emphasis>
 class:
 <screen>
-  void   initialize(Bit32u ips);
+  void   initialize(Bit64u ips);
   int    register_timer(void *this_ptr, bx_timer_handler_t, Bit32u useconds,
                         bool continuous, bool active, const char *id);
   bool   unregisterTimer(unsigned timerID);
