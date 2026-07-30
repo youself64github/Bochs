@@ -1338,6 +1338,7 @@ void bx_init_hardware()
   Bit32u memFrequency = (Bit32u) SIM->get_param_num(BXPN_MEM_FREQ_MHZ)->get();
 
   BX_MEM(0)->init_memory(memSize, hostMemSize, memBlockSize, memFrequency, SIM->get_param_num(BXPN_IPS)->get64());
+  BX_MEM(0)->init_memory(memSize, hostMemSize, memBlockSize, memFrequency);
 
   // First load the system BIOS (VGABIOS loading moved to the vga code)
   BX_MEM(0)->load_ROM(SIM->get_param_string(BXPN_ROM_PATH)->getptr(),

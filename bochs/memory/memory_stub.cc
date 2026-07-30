@@ -108,6 +108,7 @@ Bit8u* BX_MEMORY_STUB_C::alloc_vector_aligned(Bit64u bytes, Bit64u alignment)
 }
 
 void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_mhz, Bit64u ips)
+void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_mhz)
 {
   // accept only memory size which is multiply of 1M
   BX_ASSERT((host & 0xfffff) == 0);
@@ -133,6 +134,7 @@ void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size,
   if (frequency_mhz < 1) frequency_mhz = 1;
   if (frequency_mhz > 8400) frequency_mhz = 8400;
   BX_MEM_THIS frequency_mhz = frequency_mhz;
+  Bit64u ips = SIM->get_param_num(BXPN_IPS)->get64();
   BX_MEM_THIS latency_ticks = (Bit32u) (ips / (Bit64u(frequency_mhz) * 1000000));
   BX_INFO(("memory speed frequency = %u MHz, latency = %u CPU ticks per RAM access",
       BX_MEM_THIS frequency_mhz, BX_MEM_THIS latency_ticks));
