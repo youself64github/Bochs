@@ -21,6 +21,7 @@
 #include "bochs.h"
 #include "bxversion.h"
 #include "iodev/iodev.h"
+#include "iodev/virt_timer.h"
 #include "iodev/hdimage/hdimage.h"
 #if BX_NETWORKING
 #include "iodev/network/netmod.h"
@@ -142,6 +143,11 @@ static Bit64s bx_param_handler(bx_param_c *param, bool set, Bit64s val)
           device = get_floppy_devtype_from_type((int)val);
           SIM->get_param_enum("devtype", base)->set(device);
         }
+      }
+    } else if (!strcmp(pname, BXPN_IPS)) {
+      if (set && SIM->get_init_done()) {
+        bx_pc_system.set_ips((Bit32u)val);
+        bx_virt_timer.set_ips((Bit64u)val);
       }
     } else {
       BX_PANIC(("bx_param_handler called with unknown parameter '%s'", pname));
@@ -672,11 +678,13 @@ void bx_init_options()
       1);
   nthreads->set_enabled(BX_CPU_HT_THREADS_LIMIT > 1);
   nthreads->set_options(bx_param_c::CI_ONLY);
-  new bx_param_num_c(cpu_param,
+  bx_param_num_c *ips = new bx_param_num_c(cpu_param,
       "ips", "Emulated instructions per second (IPS)",
       "Emulated instructions per second, used to calibrate bochs emulated time with wall clock time.",
       BX_MIN_IPS, BX_MAX_BIT32U,
       50000000);
+  ips->set_ask_format("Type a new value for IPS: [%d] ");
+  ips->set_handler(bx_param_handler);
 #if BX_SUPPORT_SMP
   new bx_param_num_c(cpu_param,
       "quantum", "Quantum ticks in SMP simulation",
@@ -1734,6 +1742,7 @@ void bx_init_options()
   misc = new bx_list_c(menu, "misc", "Misc options");
   misc->set_runtime_param(1);
   misc->add(SIM->get_param(BXPN_VGA_UPDATE_FREQUENCY));
+  misc->add(SIM->get_param(BXPN_IPS));
   misc->add(SIM->get_param(BXPN_MOUSE_ENABLED));
   misc->add(SIM->get_param(BXPN_KBD_PASTE_DELAY));
   misc->add(SIM->get_param(BXPN_USER_SHORTCUT));

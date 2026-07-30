@@ -383,6 +383,15 @@ void bx_virt_timer_c::init(void)
   init_done = 1;
 }
 
+void bx_virt_timer_c::set_ips(Bit64u new_ips)
+{
+  ips = new_ips;
+  if (init_done) {
+    next_event_time_update(0);
+    next_event_time_update(1);
+  }
+}
+
 void bx_virt_timer_c::register_state(void)
 {
   unsigned i;
