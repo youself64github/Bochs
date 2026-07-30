@@ -55,8 +55,6 @@ BX_MEMORY_STUB_C::BX_MEMORY_STUB_C()
   len    = 0;
   used_blocks = 0;
   allocated   = 0;
-  frequency_mhz = 8400;
-  latency_ticks = 0;
 
 #if BX_LARGE_RAMFILE
   next_swapout_idx = 0;
@@ -107,7 +105,7 @@ Bit8u* BX_MEMORY_STUB_C::alloc_vector_aligned(Bit64u bytes, Bit64u alignment)
   return vector;
 }
 
-void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_mhz, Bit64u ips)
+void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size)
 {
   // accept only memory size which is multiply of 1M
   BX_ASSERT((host & 0xfffff) == 0);
@@ -130,12 +128,6 @@ void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size,
 
   BX_MEM_THIS len = guest;
   BX_MEM_THIS allocated = host;
-  if (frequency_mhz < 1) frequency_mhz = 1;
-  if (frequency_mhz > 8400) frequency_mhz = 8400;
-  BX_MEM_THIS frequency_mhz = frequency_mhz;
-  BX_MEM_THIS latency_ticks = (Bit32u) (ips / (Bit64u(frequency_mhz) * 1000000));
-  BX_INFO(("memory speed frequency = %u MHz, latency = %u CPU ticks per RAM access",
-      BX_MEM_THIS frequency_mhz, BX_MEM_THIS latency_ticks));
   BX_MEM_THIS rom   = &BX_MEM_THIS vector[host];
   BX_MEM_THIS bogus = &BX_MEM_THIS vector[host + BIOSROMSZ + EXROMSIZE];
   memset(BX_MEM_THIS rom, 0xff, BIOSROMSZ + EXROMSIZE + 4096);
@@ -177,23 +169,6 @@ Bit8u* BX_MEMORY_STUB_C::get_vector(bx_phy_address addr)
     allocate_block(block);
 
   return BX_MEM_THIS blocks[block] + (Bit32u)(addr & (BX_MEM_THIS block_size-1));
-}
-
-void BX_MEMORY_STUB_C::set_access_latency(Bit32u frequency_mhz, Bit64u ips)
-{
-  if (frequency_mhz < 1) frequency_mhz = 1;
-  if (frequency_mhz > 8400) frequency_mhz = 8400;
-  BX_MEM_THIS frequency_mhz = frequency_mhz;
-  BX_MEM_THIS latency_ticks = (Bit32u) (ips / (Bit64u(frequency_mhz) * 1000000));
-  BX_INFO(("memory speed frequency = %u MHz, latency = %u CPU ticks per RAM access",
-      BX_MEM_THIS frequency_mhz, BX_MEM_THIS latency_ticks));
-}
-
-void BX_MEMORY_STUB_C::consume_access_latency(void)
-{
-  if (BX_MEM_THIS latency_ticks != 0) {
-    bx_pc_system.tickn(BX_MEM_THIS latency_ticks);
-  }
 }
 
 #if BX_LARGE_RAMFILE
@@ -433,10 +408,8 @@ Bit8u *BX_MEMORY_STUB_C::getHostMemAddr(BX_CPU_C *cpu, bx_phy_address addr, unsi
   bx_phy_address linear_addr = bx_translate_gpa_to_linear(a20addr);
 
   if (! write) {
-    if (linear_addr < BX_MEM_THIS len) {
-      BX_MEM_THIS consume_access_latency();
+    if (linear_addr < BX_MEM_THIS len)
       return BX_MEM_THIS get_vector(linear_addr);
-    }
     else
       // Error, requested addr is out of bounds.
       return (Bit8u *) &BX_MEM_THIS bogus[a20addr & 0xfff];
@@ -445,7 +418,6 @@ Bit8u *BX_MEMORY_STUB_C::getHostMemAddr(BX_CPU_C *cpu, bx_phy_address addr, unsi
   { // op == {BX_WRITE, BX_RW}
     if (linear_addr >= BX_MEM_THIS len)
       return(NULL); // Error, requested addr is out of bounds.
-    BX_MEM_THIS consume_access_latency();
     return BX_MEM_THIS get_vector(linear_addr);
   }
 }
@@ -477,7 +449,6 @@ void BX_MEMORY_STUB_C::writePhysicalPage(BX_CPU_C *cpu, bx_phy_address addr, uns
     }
 
     // all of data is within limits of physical memory
-    BX_MEM_THIS consume_access_latency();
     if (len == 8) {
       pageWriteStampTable.decWriteStamp(phys_addr, 8);
       WriteHostQWordToLittleEndian((Bit64u*) BX_MEM_THIS get_vector(linear_addr), *(Bit64u*)data);
@@ -563,7 +534,6 @@ void BX_MEMORY_STUB_C::readPhysicalPage(BX_CPU_C *cpu, bx_phy_address addr, unsi
       return;
     }
 
-    BX_MEM_THIS consume_access_latency();
     if (len == 8) {
       * (Bit64u*) data = ReadHostQWordFromLittleEndian((Bit64u*) BX_MEM_THIS get_vector(linear_addr));
       return;
