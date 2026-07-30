@@ -51,11 +51,11 @@ BX_MEM_C::~BX_MEM_C()
   cleanup_memory();
 }
 
-void BX_MEM_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size)
+void BX_MEM_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_mhz, Bit64u ips)
 {
   unsigned idx, i;
 
-  BX_MEMORY_STUB_C::init_memory(guest, host, block_size);
+  BX_MEMORY_STUB_C::init_memory(guest, host, block_size, frequency_mhz, ips);
 
   BX_MEM_THIS smram_available = false;
   BX_MEM_THIS smram_enable = false;
