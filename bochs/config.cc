@@ -768,6 +768,14 @@ void bx_init_options()
       0, 8192,
       0);
   mem_block_size->set_ask_format("Enter memory block size (KB): [%d] ");
+
+  bx_param_num_c *mem_frequency = new bx_param_num_c(ram,
+      "frequency",
+      "Memory speed frequency (megahertz)",
+      "RAM speed frequency in MHz used to add emulated memory access latency (1 disables neither RAM nor ROM; 8400 is the fastest setting)",
+      1, 8400,
+      8400);
+  mem_frequency->set_ask_format("Enter memory speed frequency (MHz): [%d] ");
   ram->set_options(ram->SERIES_ASK);
 
   path = new bx_param_filename_c(rom,

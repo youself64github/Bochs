@@ -55,6 +55,7 @@
 #define BXPN_MEM_SIZE                    "memory.standard.ram.guest"
 #define BXPN_HOST_MEM_SIZE               "memory.standard.ram.host"
 #define BXPN_MEM_BLOCK_SIZE              "memory.standard.ram.block_size"
+#define BXPN_MEM_FREQ_MHZ                "memory.standard.ram.frequency"
 #define BXPN_ROMIMAGE                    "memory.standard.rom"
 #define BXPN_ROM_PATH                    "memory.standard.rom.file"
 #define BXPN_ROM_ADDRESS                 "memory.standard.rom.address"

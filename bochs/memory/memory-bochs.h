@@ -74,6 +74,8 @@ protected:
   Bit8u  **blocks;
   Bit8u   *rom;      // 512k BIOS rom space + 128k expansion rom space
   Bit8u   *bogus;    // 4k for unexisting memory
+  Bit32u  frequency_mhz; // emulated memory speed frequency
+  Bit32u  latency_ticks; // CPU ticks consumed per RAM access
 
   Bit32u used_blocks;
 #if BX_LARGE_RAMFILE
@@ -91,6 +93,8 @@ public:
   BX_MEM_SMF void    init_memory(Bit64u guest, Bit64u host, Bit32u block_size);
   BX_MEM_SMF void    cleanup_memory(void);
   BX_MEM_SMF Bit8u*  get_vector(bx_phy_address addr);
+  BX_MEM_SMF void    set_access_latency(Bit32u frequency_mhz, Bit64u ips);
+  BX_MEM_SMF void    consume_access_latency(void);
 
   BX_MEM_SMF Bit8u*  getHostMemAddr(BX_CPU_C *cpu, bx_phy_address addr, unsigned rw);
 
