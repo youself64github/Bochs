@@ -136,6 +136,7 @@ bx_hard_drive_c::bx_hard_drive_c()
       channels[channel].drives[device].cdrom.cd = NULL;
       channels[channel].drives[device].seek_timer_index = BX_NULL_TIMER_HANDLE;
       channels[channel].drives[device].statusbar_id = -1;
+      channels[channel].drives[device].last_transfer_delay_usec = 0;
     }
   }
   rt_conf_id = -1;
@@ -368,6 +369,7 @@ void bx_hard_drive_c::init(void)
           }
         }
         BX_HD_THIS channels[channel].drives[device].next_lsector = 0;
+        BX_HD_THIS channels[channel].drives[device].last_transfer_delay_usec = 0;
         BX_HD_THIS channels[channel].drives[device].curr_lsector =
           BX_HD_THIS channels[channel].drives[device].hdimage->hd_size / sect_size;
         BX_HD_THIS channels[channel].drives[device].controller.buffer_total_size =
@@ -3776,6 +3778,8 @@ void bx_hard_drive_c::set_signature(Bit8u channel, Bit8u id)
 bool bx_hard_drive_c::ide_read_sector(Bit8u channel, Bit8u *buffer, Bit32u buffer_size)
 {
   controller_t *controller = &BX_SELECTED_CONTROLLER(channel);
+  BX_SELECTED_DRIVE(channel).last_transfer_delay_usec =
+    get_transfer_delay_usec(channel, 0, buffer_size);
 
   Bit64s logical_sector = 0;
   Bit64s ret;
@@ -3813,6 +3817,8 @@ bool bx_hard_drive_c::ide_read_sector(Bit8u channel, Bit8u *buffer, Bit32u buffe
 bool bx_hard_drive_c::ide_write_sector(Bit8u channel, Bit8u *buffer, Bit32u buffer_size)
 {
   controller_t *controller = &BX_SELECTED_CONTROLLER(channel);
+  BX_SELECTED_DRIVE(channel).last_transfer_delay_usec =
+    get_transfer_delay_usec(channel, 1, buffer_size);
 
   Bit64s logical_sector = 0;
   Bit64s ret;
@@ -3845,6 +3851,51 @@ bool bx_hard_drive_c::ide_write_sector(Bit8u channel, Bit8u *buffer, Bit32u buff
   } while (--sector_count > 0);
 
   return 1;
+}
+
+Bit32u bx_hard_drive_c::get_transfer_delay_usec(Bit8u channel, bool is_write, Bit32u byte_count)
+{
+  char ata_name[20];
+  sprintf(ata_name, "ata.%d.%s", channel, BX_SLAVE_SELECTED(channel) ? "slave" : "master");
+  bx_list_c *base = (bx_list_c*) SIM->get_param(ata_name);
+
+  Bit32u iops = 0, mbps = 0;
+  switch (SIM->get_param_enum("speed", base)->get()) {
+    case BX_ATA_SPEED_4200RPM:
+      iops = 55;
+      mbps = is_write ? 35 : 40;
+      break;
+    case BX_ATA_SPEED_5400RPM:
+      iops = 75;
+      mbps = is_write ? 60 : 70;
+      break;
+    case BX_ATA_SPEED_7200RPM:
+      iops = 100;
+      mbps = is_write ? 100 : 120;
+      break;
+    case BX_ATA_SPEED_CUSTOM:
+      iops = SIM->get_param_num("iops", base)->get();
+      mbps = SIM->get_param_num(is_write ? "write_mbps" : "read_mbps", base)->get();
+      break;
+    case BX_ATA_SPEED_NATIVE:
+    default:
+      return 0;
+  }
+
+  Bit64u delay = 0;
+  if (iops > 0) {
+    delay = 1000000 / iops;
+  }
+  if (mbps > 0) {
+    Bit64u throughput_delay = ((Bit64u)byte_count * 1000000) / ((Bit64u)mbps * 1024 * 1024);
+    if (throughput_delay > delay) {
+      delay = throughput_delay;
+    }
+  }
+  if (delay > 0xffffffff) {
+    delay = 0xffffffff;
+  }
+  return (Bit32u)delay;
 }
 
 void bx_hard_drive_c::lba48_transform(controller_t *controller, bool lba48)
@@ -3884,6 +3935,12 @@ void bx_hard_drive_c::start_seek(Bit8u channel)
   }
   fSeekTime = fSeekBase * (double)abs((int)(new_pos - prev_pos + 1)) / (max_pos + 1);
   seek_time = (fSeekTime > 10.0) ? (Bit32u)fSeekTime : 10;
+  if ((0xffffffff - seek_time) < BX_SELECTED_DRIVE(channel).last_transfer_delay_usec) {
+    seek_time = 0xffffffff;
+  } else {
+    seek_time += BX_SELECTED_DRIVE(channel).last_transfer_delay_usec;
+  }
+  BX_SELECTED_DRIVE(channel).last_transfer_delay_usec = 0;
   bx_pc_system.activate_timer(BX_SELECTED_DRIVE(channel).seek_timer_index, seek_time, 0);
 }
 
