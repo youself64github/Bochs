@@ -145,6 +145,8 @@ public:
   //Initialization step #2
   void init(void);
 
+  void set_ips(Bit64u new_ips);
+
   void register_state(void);
 
   //Determine the real time elapsed during runtime config or between save and
