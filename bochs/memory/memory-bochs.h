@@ -90,9 +90,10 @@ public:
   BX_MEMORY_STUB_C();
   virtual ~BX_MEMORY_STUB_C();
 
-  BX_MEM_SMF void    init_memory(Bit64u guest, Bit64u host, Bit32u block_size);
+  BX_MEM_SMF void    init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_mhz);
   BX_MEM_SMF void    cleanup_memory(void);
   BX_MEM_SMF Bit8u*  get_vector(bx_phy_address addr);
+  BX_MEM_SMF void    consume_access_latency(void);
 
   BX_MEM_SMF Bit8u*  getHostMemAddr(BX_CPU_C *cpu, bx_phy_address addr, unsigned rw);
 
