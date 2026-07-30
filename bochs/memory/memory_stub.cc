@@ -107,6 +107,7 @@ Bit8u* BX_MEMORY_STUB_C::alloc_vector_aligned(Bit64u bytes, Bit64u alignment)
   return vector;
 }
 
+void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_mhz, Bit64u ips)
 void BX_MEMORY_STUB_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size, Bit32u frequency_mhz)
 {
   // accept only memory size which is multiply of 1M
