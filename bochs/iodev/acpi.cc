@@ -575,6 +575,11 @@ void bx_acpi_ctrl_c::timer()
   BX_ACPI_THIS pm_update_sci();
 }
 
+void bx_acpi_ctrl_c::set_ips(Bit64u new_ips)
+{
+  ips = new_ips;
+  BX_ACPI_THIS pm_update_sci();
+}
 
 // static pci configuration space write callback handler
 void bx_acpi_ctrl_c::pci_write_handler(Bit8u address, Bit32u value, unsigned io_len)
