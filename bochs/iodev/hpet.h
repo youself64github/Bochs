@@ -77,8 +77,6 @@ public:
   virtual void init();
   virtual void reset(unsigned type);
   virtual void register_state(void);
-  virtual void set_ips(Bit64u new_ips);
-
 #if BX_DEBUGGER
   virtual void debug_dump(int argc, char **argv);
 #endif
@@ -102,8 +100,6 @@ private:
   void   hpet_set_timer(HPETTimer *t);
   void   hpet_del_timer(HPETTimer *t);
 
-  Bit64u ips;
-
   static void timer_handler(void *);
   void   hpet_timer(void);
 
@@ -120,7 +116,5 @@ private:
 };
 
 #endif
-
-BOCHSAPI extern bx_hpet_c bx_hpet;
 
 #endif
