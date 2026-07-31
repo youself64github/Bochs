@@ -28,9 +28,8 @@
 #include "iodev.h"
 #include "param_names.h"
 #include "vgacore.h"
-#include "cpu/cpu.h"
 #include "virt_timer.h"
-#include "pc_system.h"
+#include "memory/memory-bochs.h"
 #include "bx_debug/debug.h"
 
 #define BX_VGA_THIS this->
@@ -101,12 +100,7 @@ void bx_vgacore_c::init(void)
 
   BX_VGA_THIS vga_ext = SIM->get_param_enum(BXPN_VGA_EXTENSION);
   BX_VGA_THIS pci_enabled = 0;
-  Bit64u ips = SIM->get_param_num("ips")->get64();
-  BX_VGA_THIS vgafrequency_hz = SIM->get_param_num("vga_core_freq")->get64();
-  BX_VGA_THIS vgalatency_ticks = (Bit64u) (ips / (Bit64u(vgafrequency_hz) * 1));
-  BX_INFO(("VGA speed frequency = %u Hz, latency = %u CPU ticks per VGA access",
-      BX_VGA_THIS vgafrequency_hz, BX_VGA_THIS vgalatency_ticks));
-  
+
   BX_VGA_THIS init_standard_vga();
   if (!BX_VGA_THIS init_vga_extension()) {
     // VGA memory not yet initialized
@@ -130,13 +124,6 @@ void bx_vgacore_c::init(void)
 
   if (!BX_VGA_THIS pci_enabled) {
     BX_MEM(0)->load_ROM(SIM->get_param_string(BXPN_VGA_ROM_PATH)->getptr(), 0xc0000, 1);
-  }
-}
-
-void bx_vgacore_c::consume_vga_access_latency(void)
-{
-  if (BX_VGA_THIS vgalatency_ticks != 0) {
-    bx_pc_system.tickn(BX_VGA_THIS vgalatency_ticks);
   }
 }
 
@@ -490,8 +477,8 @@ Bit32u bx_vgacore_c::read(Bit32u address, unsigned io_len)
   Bit8u retval;
   Bit32u ret = 0;
 #define RETURN(x) do { ret = (x); goto read_return; } while (0)
-
-  BX_VGA_THIS consume_vga_access_latency();
+  
+  BX_MEM_THIS consume_access_latency();
   
   if (io_len == 2) {
     ret16 = bx_vgacore_c::read(address, 1);
@@ -805,8 +792,8 @@ void bx_vgacore_c::write(Bit32u address, Bit32u value, unsigned io_len, bool no_
   Bit8u charmap1, charmap2, prev_memory_mapping;
   bool prev_video_enabled, prev_line_graphics, prev_int_pal_size, prev_graphics_alpha;
   bool needs_update = 0;
-
-  BX_VGA_THIS consume_vga_access_latency();
+  
+  BX_MEM_THIS consume_access_latency();
   
   if (!no_log)
     switch (io_len) {
@@ -1348,9 +1335,7 @@ void bx_vgacore_c::update(void)
   static unsigned cs_counter = 1;
   static bool cs_visible = 0;
   bool cs_toggle = 0;
-  
-  BX_VGA_THIS consume_vga_access_latency();
-  
+
   cs_counter--;
   /* no screen update necessary */
   if ((BX_VGA_THIS s.vga_mem_updated == 0) && (cs_counter > 0))
@@ -1738,8 +1723,8 @@ Bit8u bx_vgacore_c::mem_read(bx_phy_address addr)
 {
   Bit32u offset;
   Bit8u read_map_select = BX_VGA_THIS s.graphics_ctrl.read_map_select;
-
-  BX_VGA_THIS consume_vga_access_latency();
+  
+  BX_MEM_THIS consume_access_latency();
   
   if (addr >= 0xA0000) {
     switch (BX_VGA_THIS s.graphics_ctrl.memory_mapping) {
@@ -1844,8 +1829,8 @@ void bx_vgacore_c::mem_write(bx_phy_address addr, Bit8u value)
   unsigned start_addr;
   Bit8u sequ_map_mask = BX_VGA_THIS s.sequencer.map_mask & 0x0f;
 
-  BX_VGA_THIS consume_vga_access_latency();
-
+  BX_MEM_THIS consume_access_latency();
+  
   if (addr >= 0xA0000) {
     switch (BX_VGA_THIS s.graphics_ctrl.memory_mapping) {
       case 1: // 0xA0000 .. 0xAFFFF
