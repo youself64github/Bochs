@@ -2986,6 +2986,8 @@ static int parse_line_formatted(const char *context, int num_params, char *param
         SIM->get_param_enum(BXPN_VGA_EXTENSION)->set_by_name(&params[i][10]);
       } else if (!strncmp(params[i], "update_freq=", 12)) {
         SIM->get_param_num(BXPN_VGA_UPDATE_FREQUENCY)->set(atol(&params[i][12]));
+      } else if (!strncmp(params[i], "core_freq=", 12)) {
+        SIM->get_param_num(BXPN_VGA_CORE_FREQUENCY)->set(atol(&params[i][12]));
       } else if (!strncmp(params[i], "realtime=", 9)) {
         SIM->get_param_bool(BXPN_VGA_REALTIME)->set(atol(&params[i][9]));
       } else if (!strncmp(params[i], "ddc=", 4)) {
