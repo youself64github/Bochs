@@ -33,6 +33,8 @@
 
 #include "iodev.h"
 #include "pc_system.h"
+#include "gui/siminterface.h"
+#include "param_names.h"
 
 #if BX_SUPPORT_PCI
 
@@ -418,7 +420,8 @@ void bx_hpet_c::hpet_del_timer(HPETTimer *t)
 
 void bx_hpet_c::set_ips(Bit64u new_ips)
 {
-  BX_UNUSED(new_ips);
+  ips = new_ips;
+
   if (hpet_enabled()) {
     s.hpet_counter = hpet_get_ticks();
     s.hpet_reference_value = s.hpet_counter;
