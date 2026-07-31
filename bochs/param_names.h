@@ -84,7 +84,6 @@
 #define BXPN_VGA_EXTENSION               "display.vgaext.extension"
 #define BXPN_VGA_EXT_MODEL               "display.vgaext.model"
 #define BXPN_VGA_UPDATE_FREQUENCY        "display.vga_update_frequency"
-#define BXPN_VGA_CORE_FREQUENCY          "display.vga_core_frequency"
 #define BXPN_VGA_REALTIME                "display.vga_realtime"
 #define BXPN_DDC_MODE                    "display.ddc_mode"
 #define BXPN_DDC_FILE                    "display.ddc_file"
