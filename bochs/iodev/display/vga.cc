@@ -300,7 +300,7 @@ void bx_vga_c::write_handler_no_log(void *this_ptr, Bit32u address, Bit32u value
 
 void bx_vga_c::write(Bit32u address, Bit32u value, unsigned io_len, bool no_log)
 {
-  BX_VGA_THIS consume_vga_access_latency();
+  BX_MEM_THIS consume_access_latency();
   if (io_len == 2) {
 #if BX_USE_VGA_SMF
     bx_vga_c::write_handler_no_log(0, address, value & 0xff, 1);
@@ -352,9 +352,7 @@ void bx_vga_c::write(Bit32u address, Bit32u value, unsigned io_len, bool no_log)
 void bx_vga_c::update(void)
 {
   unsigned iHeight, iWidth;
-  
-  BX_VGA_THIS consume_vga_access_latency();
-  
+
   if (BX_VGA_THIS vbe.enabled) {
     /* no screen update necessary */
     if ((BX_VGA_THIS s.vga_mem_updated==0) && BX_VGA_THIS s.graphics_ctrl.graphics_alpha)
@@ -731,7 +729,7 @@ Bit8u bx_vga_c::mem_read(bx_phy_address addr)
     }
   }
 #endif
-  BX_VGA_THIS consume_vga_access_latency();
+  BX_MEM_THIS consume_access_latency();
   // if in a vbe enabled mode, read from the vbe_memory
   if ((BX_VGA_THIS vbe.enabled) && (BX_VGA_THIS vbe.bpp != VBE_DISPI_BPP_4)) {
     return vbe_mem_read(addr);
@@ -771,7 +769,7 @@ bool bx_vga_c::mem_write_handler(bx_phy_address addr, unsigned len, void *data, 
 
 void bx_vga_c::mem_write(bx_phy_address addr, Bit8u value)
 {
-  BX_VGA_THIS consume_vga_access_latency();
+  BX_MEM_THIS consume_access_latency();
   // if in a vbe enabled mode, write to the vbe_memory
   if ((BX_VGA_THIS vbe.enabled) && (BX_VGA_THIS vbe.bpp != VBE_DISPI_BPP_4)) {
     vbe_mem_write(addr, value);
@@ -1008,7 +1006,7 @@ Bit32u bx_vga_c::vbe_read(Bit32u address, unsigned io_len)
 #endif  // BX_USE_VGA_SMF == 0
   Bit16u retval = 0;
 //  BX_INFO(("VBE_read %x (len %x)", address, io_len));
-  BX_VGA_THIS consume_vga_access_latency();
+  BX_MEM_THIS consume_access_latency();
   if (address==VBE_DISPI_IOPORT_INDEX)
   {
     // index register
@@ -1110,7 +1108,7 @@ void bx_vga_c::vbe_write(Bit32u address, Bit32u value, unsigned io_len)
   unsigned i;
 
 //  BX_INFO(("VBE_write %x = %x (len %x)", address, value, io_len));
-  BX_VGA_THIS consume_vga_access_latency();
+  BX_MEM_THIS consume_access_latency();
   switch(address)
   {
     // index register
