@@ -81,6 +81,8 @@ public:
 #endif
 
 class bx_vgacore_c : public bx_vga_stub_c {
+Bit32u vgafrequency_hz;
+Bit32u vgalatency_ticks;
 public:
   bx_vgacore_c();
   virtual ~bx_vgacore_c();
