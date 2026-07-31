@@ -41,6 +41,7 @@ public:
   virtual void generate_smi(Bit8u value);
   virtual void register_state(void);
   virtual void after_restore_state(void);
+  virtual void set_ips(Bit64u new_ips);
 
   virtual void pci_write_handler(Bit8u address, Bit32u value, unsigned io_len);
 
