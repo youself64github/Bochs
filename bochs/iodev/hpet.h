@@ -99,6 +99,7 @@ private:
   void   update_irq(HPETTimer *timer, bool set);
   void   hpet_set_timer(HPETTimer *t);
   void   hpet_del_timer(HPETTimer *t);
+  void   set_ips(Bit64u new_ips);
 
   static void timer_handler(void *);
   void   hpet_timer(void);
