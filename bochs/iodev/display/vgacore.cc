@@ -1347,7 +1347,9 @@ void bx_vgacore_c::update(void)
   static unsigned cs_counter = 1;
   static bool cs_visible = 0;
   bool cs_toggle = 0;
-
+  
+  BX_VGA_THIS consume_vga_access_latency();
+  
   cs_counter--;
   /* no screen update necessary */
   if ((BX_VGA_THIS s.vga_mem_updated == 0) && (cs_counter > 0))
