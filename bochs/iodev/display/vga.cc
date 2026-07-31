@@ -352,7 +352,9 @@ void bx_vga_c::write(Bit32u address, Bit32u value, unsigned io_len, bool no_log)
 void bx_vga_c::update(void)
 {
   unsigned iHeight, iWidth;
-
+  
+  BX_VGA_THIS consume_vga_access_latency();
+  
   if (BX_VGA_THIS vbe.enabled) {
     /* no screen update necessary */
     if ((BX_VGA_THIS s.vga_mem_updated==0) && BX_VGA_THIS s.graphics_ctrl.graphics_alpha)
