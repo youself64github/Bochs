@@ -63,6 +63,8 @@ const Bit64u HPET_MIN_ALLOWED_PERIOD = BX_CONST64(1);
 
 bx_hpet_c *theHPET = NULL;
 
+bx_hpet_c bx_hpet;
+
 // device plugin entry point
 
 PLUGIN_ENTRY_FOR_MODULE(hpet)
