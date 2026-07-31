@@ -416,6 +416,19 @@ void bx_hpet_c::hpet_del_timer(HPETTimer *t)
   update_irq(t, 0);
 }
 
+void bx_hpet_c::set_ips(Bit64u new_ips)
+{
+  BX_UNUSED(new_ips);
+  if (hpet_enabled()) {
+    s.hpet_counter = hpet_get_ticks();
+    s.hpet_reference_value = s.hpet_counter;
+    s.hpet_reference_time = bx_pc_system.time_nsec();
+    for (int i = 0; i < s.num_timers; i++) {
+      hpet_set_timer(&s.timer[i]);
+    }
+  }
+}
+
 Bit32u bx_hpet_c::read_aligned(bx_phy_address address)
 {
   Bit32u value = 0;
