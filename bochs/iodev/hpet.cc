@@ -33,8 +33,6 @@
 
 #include "iodev.h"
 #include "pc_system.h"
-#include "gui/siminterface.h"
-#include "param_names.h"
 
 #if BX_SUPPORT_PCI
 
@@ -62,8 +60,6 @@ const Bit64u HPET_MIN_ALLOWED_PERIOD = BX_CONST64(1);
 #define LOG_THIS theHPET->
 
 bx_hpet_c *theHPET = NULL;
-
-bx_hpet_c bx_hpet;
 
 // device plugin entry point
 
@@ -418,20 +414,6 @@ void bx_hpet_c::hpet_del_timer(HPETTimer *t)
   BX_DEBUG(("Timer %d deactivated", t->tn));
   bx_pc_system.deactivate_timer(t->timer_id);
   update_irq(t, 0);
-}
-
-void bx_hpet_c::set_ips(Bit64u new_ips)
-{
-  ips = new_ips;
-
-  if (hpet_enabled()) {
-    s.hpet_counter = hpet_get_ticks();
-    s.hpet_reference_value = s.hpet_counter;
-    s.hpet_reference_time = bx_pc_system.time_nsec();
-    for (int i = 0; i < s.num_timers; i++) {
-      hpet_set_timer(&s.timer[i]);
-    }
-  }
 }
 
 Bit32u bx_hpet_c::read_aligned(bx_phy_address address)
