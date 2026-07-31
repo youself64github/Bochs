@@ -1054,14 +1054,6 @@ void bx_init_options()
       10);
   vga_update_freq->set_ask_format ("Type a new value for VGA update frequency: [%d] ");
 
-  bx_param_num_c *vga_core_freq = new bx_param_num_c(display,
-      "vga_core_frequency",
-      "VGA Core Frequency",
-      "Hz of VGA Core Frequency",
-      0, 8400000000,
-      8400000000);
-  vga_core_freq->set_ask_format ("Type a new HZ value for VGA core frequency: [" FMT_LL "d] ");
-  
   bx_list_c *vgaext = new bx_list_c(display, "vgaext", "VGA extension");
   vgaext->set_options(vgaext->SERIES_ASK);
   bx_init_vgaext_list();
@@ -2986,8 +2978,6 @@ static int parse_line_formatted(const char *context, int num_params, char *param
         SIM->get_param_enum(BXPN_VGA_EXTENSION)->set_by_name(&params[i][10]);
       } else if (!strncmp(params[i], "update_freq=", 12)) {
         SIM->get_param_num(BXPN_VGA_UPDATE_FREQUENCY)->set(atol(&params[i][12]));
-      } else if (!strncmp(params[i], "core_freq=", 12)) {
-        (Bit64u)SIM->get_param_num(BXPN_VGA_CORE_FREQUENCY)->set(atol(&params[i][12]));
       } else if (!strncmp(params[i], "realtime=", 9)) {
         SIM->get_param_bool(BXPN_VGA_REALTIME)->set(atol(&params[i][9]));
       } else if (!strncmp(params[i], "ddc=", 4)) {
@@ -3662,10 +3652,9 @@ int bx_write_configuration(const char *rc, int overwrite)
     }
   }
   fprintf(fp, "\n");
-  fprintf(fp, "vga: extension=%s, update_freq=%u, core_freq=" FMT_LL "u, realtime=%u, ddc=%s",
+  fprintf(fp, "vga: extension=%s, update_freq=%u, realtime=%u, ddc=%s",
     SIM->get_param_enum(BXPN_VGA_EXTENSION)->get_selected(),
     SIM->get_param_num(BXPN_VGA_UPDATE_FREQUENCY)->get(),
-    (Bit64u)SIM->get_param_num(BXPN_VGA_CORE_FREQUENCY)->get64(),
     SIM->get_param_bool(BXPN_VGA_REALTIME)->get(),
     SIM->get_param_enum(BXPN_DDC_MODE)->get_selected());
   if (SIM->get_param_enum(BXPN_DDC_MODE)->get() == BX_DDC_MODE_FILE) {
