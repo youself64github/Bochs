@@ -3662,9 +3662,10 @@ int bx_write_configuration(const char *rc, int overwrite)
     }
   }
   fprintf(fp, "\n");
-  fprintf(fp, "vga: extension=%s, update_freq=%u, realtime=%u, ddc=%s",
+  fprintf(fp, "vga: extension=%s, update_freq=%u, core_freq=" FMT_LL "u, realtime=%u, ddc=%s",
     SIM->get_param_enum(BXPN_VGA_EXTENSION)->get_selected(),
     SIM->get_param_num(BXPN_VGA_UPDATE_FREQUENCY)->get(),
+    (Bit64u)SIM->get_param_num(BXPN_VGA_CORE_FREQUENCY)->get64(),
     SIM->get_param_bool(BXPN_VGA_REALTIME)->get(),
     SIM->get_param_enum(BXPN_DDC_MODE)->get_selected());
   if (SIM->get_param_enum(BXPN_DDC_MODE)->get() == BX_DDC_MODE_FILE) {
