@@ -60,6 +60,8 @@ private:
   BX_ACPI_SMF void pm_update_sci(void);
   static void timer_handler(void *);
 
+  Bit64u ips;
+
   bool is_realtime;
 
   struct {
@@ -84,5 +86,7 @@ private:
     } smbus;
   } s;
 };
+
+BOCHSAPI extern bx_acpi_ctrl_c bx_acpi;
 
 #endif
