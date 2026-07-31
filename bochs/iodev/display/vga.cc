@@ -40,6 +40,7 @@
 #include "pxextract.h"
 #include "vga.h"
 #include "virt_timer.h"
+#include "memory/memory-bochs.h"
 
 #include "bx_debug/debug.h"
 
@@ -299,6 +300,7 @@ void bx_vga_c::write_handler_no_log(void *this_ptr, Bit32u address, Bit32u value
 
 void bx_vga_c::write(Bit32u address, Bit32u value, unsigned io_len, bool no_log)
 {
+  BX_MEM_THIS consume_access_latency();
   if (io_len == 2) {
 #if BX_USE_VGA_SMF
     bx_vga_c::write_handler_no_log(0, address, value & 0xff, 1);
@@ -727,6 +729,7 @@ Bit8u bx_vga_c::mem_read(bx_phy_address addr)
     }
   }
 #endif
+  BX_MEM_THIS consume_access_latency();
   // if in a vbe enabled mode, read from the vbe_memory
   if ((BX_VGA_THIS vbe.enabled) && (BX_VGA_THIS vbe.bpp != VBE_DISPI_BPP_4)) {
     return vbe_mem_read(addr);
@@ -766,6 +769,7 @@ bool bx_vga_c::mem_write_handler(bx_phy_address addr, unsigned len, void *data, 
 
 void bx_vga_c::mem_write(bx_phy_address addr, Bit8u value)
 {
+  BX_MEM_THIS consume_access_latency();
   // if in a vbe enabled mode, write to the vbe_memory
   if ((BX_VGA_THIS vbe.enabled) && (BX_VGA_THIS vbe.bpp != VBE_DISPI_BPP_4)) {
     vbe_mem_write(addr, value);
@@ -828,10 +832,12 @@ bx_vga_c::vbe_mem_read(bx_phy_address addr)
   if (addr >= BX_VGA_THIS vbe.base_address) {
     // LFB read
     offset = (Bit32u)(addr - BX_VGA_THIS vbe.base_address);
+    BX_MEM_THIS consume_access_latency();
   } else if (addr < 0xB0000) {
     // banked mode read
     offset = (Bit32u)(BX_VGA_THIS vbe.bank[1] * (BX_VGA_THIS vbe.bank_granularity_kb << 10) +
              (addr & 0xffff));
+    BX_MEM_THIS consume_access_latency();
   } else {
     // out of bounds read
     return 0;
@@ -853,10 +859,12 @@ bx_vga_c::vbe_mem_write(bx_phy_address addr, Bit8u value)
   if (addr >= BX_VGA_THIS vbe.base_address) {
     // LFB write
     offset = (Bit32u)(addr - BX_VGA_THIS vbe.base_address);
+    BX_MEM_THIS consume_access_latency();
   } else if (addr < 0xB0000) {
     // banked mode write
     offset = (Bit32u)(BX_VGA_THIS vbe.bank[0] * (BX_VGA_THIS vbe.bank_granularity_kb << 10) +
              (addr & 0xffff));
+    BX_MEM_THIS consume_access_latency();
   } else {
     // ignore out of bounds write
     return;
@@ -997,9 +1005,8 @@ Bit32u bx_vga_c::vbe_read(Bit32u address, unsigned io_len)
   UNUSED(this_ptr);
 #endif  // BX_USE_VGA_SMF == 0
   Bit16u retval = 0;
-
 //  BX_INFO(("VBE_read %x (len %x)", address, io_len));
-
+  BX_MEM_THIS consume_access_latency();
   if (address==VBE_DISPI_IOPORT_INDEX)
   {
     // index register
@@ -1101,7 +1108,7 @@ void bx_vga_c::vbe_write(Bit32u address, Bit32u value, unsigned io_len)
   unsigned i;
 
 //  BX_INFO(("VBE_write %x = %x (len %x)", address, value, io_len));
-
+  BX_MEM_THIS consume_access_latency();
   switch(address)
   {
     // index register
