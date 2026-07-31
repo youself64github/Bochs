@@ -103,6 +103,7 @@ display
   screenmode
   vga_extension
   vga_update_interval
+  vga_core_frequency_interval
   ddc_mode
   ddc_file
   vbe_memsize
