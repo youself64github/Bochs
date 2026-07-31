@@ -29,7 +29,7 @@
 #include "param_names.h"
 #include "vgacore.h"
 #include "virt_timer.h"
-#include "memory/memory-bochs.h"
+
 #include "bx_debug/debug.h"
 
 #define BX_VGA_THIS this->
@@ -477,9 +477,7 @@ Bit32u bx_vgacore_c::read(Bit32u address, unsigned io_len)
   Bit8u retval;
   Bit32u ret = 0;
 #define RETURN(x) do { ret = (x); goto read_return; } while (0)
-  
-  BX_MEM_THIS consume_access_latency();
-  
+
   if (io_len == 2) {
     ret16 = bx_vgacore_c::read(address, 1);
     ret16 |= (bx_vgacore_c::read(address+1, 1)) << 8;
@@ -792,9 +790,7 @@ void bx_vgacore_c::write(Bit32u address, Bit32u value, unsigned io_len, bool no_
   Bit8u charmap1, charmap2, prev_memory_mapping;
   bool prev_video_enabled, prev_line_graphics, prev_int_pal_size, prev_graphics_alpha;
   bool needs_update = 0;
-  
-  BX_MEM_THIS consume_access_latency();
-  
+
   if (!no_log)
     switch (io_len) {
       case 1:
@@ -1723,9 +1719,7 @@ Bit8u bx_vgacore_c::mem_read(bx_phy_address addr)
 {
   Bit32u offset;
   Bit8u read_map_select = BX_VGA_THIS s.graphics_ctrl.read_map_select;
-  
-  BX_MEM_THIS consume_access_latency();
-  
+
   if (addr >= 0xA0000) {
     switch (BX_VGA_THIS s.graphics_ctrl.memory_mapping) {
       case 1: // 0xA0000 .. 0xAFFFF
@@ -1829,8 +1823,6 @@ void bx_vgacore_c::mem_write(bx_phy_address addr, Bit8u value)
   unsigned start_addr;
   Bit8u sequ_map_mask = BX_VGA_THIS s.sequencer.map_mask & 0x0f;
 
-  BX_MEM_THIS consume_access_latency();
-  
   if (addr >= 0xA0000) {
     switch (BX_VGA_THIS s.graphics_ctrl.memory_mapping) {
       case 1: // 0xA0000 .. 0xAFFFF
