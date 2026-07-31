@@ -85,6 +85,7 @@ public:
   bx_vgacore_c();
   virtual ~bx_vgacore_c();
   virtual void   init(void);
+  virtual void   consume_vga_access_latency(void);
   virtual void   reset(unsigned type) {}
   static bool    mem_read_handler(bx_phy_address addr, unsigned len, void *data, void *param);
   static bool    mem_write_handler(bx_phy_address addr, unsigned len, void *data, void *param);
