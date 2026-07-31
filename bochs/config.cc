@@ -772,11 +772,11 @@ void bx_init_options()
   
   bx_param_num_c *mem_frequency = new bx_param_num_c(ram,
       "frequency",
-      "Memory speed frequency (hertz)",
-      "RAM speed frequency in Hz used to add emulated memory access latency (1 disables neither RAM nor ROM; 8400 is the fastest setting)",
-      1, 8400000000,
-      8400000000);
-  mem_frequency->set_ask_format("Enter memory speed frequency (Hz): [%d] ");
+      "Memory speed frequency (megahertz)",
+      "RAM speed frequency in MHz used to add emulated memory access latency (1 disables neither RAM nor ROM; 8400 is the fastest setting)",
+      1, 8400,
+      8400);
+  mem_frequency->set_ask_format("Enter memory speed frequency (MHz): [%d] ");
   
   path = new bx_param_filename_c(rom,
       "file",
@@ -1500,21 +1500,21 @@ void bx_init_options()
         0);
       iops->set_ask_format("Enter custom IOPS limit: [%d]");
 
-      bx_param_num_c *read_kbps = new bx_param_num_c(menu,
-        "read_kbps",
-        "Custom read KB/s limit",
-        "Maximum disk read throughput in KB/s for custom speed (0 disables read throughput throttling)",
-        0, 100000000,
+      bx_param_num_c *read_mbps = new bx_param_num_c(menu,
+        "read_mbps",
+        "Custom read MB/s limit",
+        "Maximum disk read throughput in MB/s for custom speed (0 disables read throughput throttling)",
+        0, 100000,
         0);
-      read_kbps->set_ask_format("Enter custom read KB/s limit: [%d]");
+      read_mbps->set_ask_format("Enter custom read MB/s limit: [%d]");
 
-      bx_param_num_c *write_kbps = new bx_param_num_c(menu,
-        "write_kbps",
-        "Custom write KB/s limit",
-        "Maximum disk write throughput in KB/s for custom speed (0 disables write throughput throttling)",
-        0, 100000000,
+      bx_param_num_c *write_mbps = new bx_param_num_c(menu,
+        "write_mbps",
+        "Custom write MB/s limit",
+        "Maximum disk write throughput in MB/s for custom speed (0 disables write throughput throttling)",
+        0, 100000,
         0);
-      write_kbps->set_ask_format("Enter custom write KB/s limit: [%d]");
+      write_mbps->set_ask_format("Enter custom write MB/s limit: [%d]");
 
       static const char *atadevice_biosdetect_names[] = { "auto", "cmos", "none", NULL };
 
