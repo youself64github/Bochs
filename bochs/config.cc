@@ -1058,8 +1058,8 @@ void bx_init_options()
       "vga_core_frequency",
       "VGA Core Frequency",
       "Hz of VGA Core Frequency",
-      0, BX_MAX_BIT32U,
-      BX_MAX_BIT32U);
+      0, 8400000000,
+      8400000000);
   vga_core_freq->set_ask_format ("Type a new HZ value for VGA core frequency: [%d] ");
   
   bx_list_c *vgaext = new bx_list_c(display, "vgaext", "VGA extension");
