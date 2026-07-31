@@ -34,6 +34,8 @@
 #include "pci.h"
 #include "acpi.h"
 #include "virt_timer.h"
+#include "gui/siminterface.h"
+#include "param_names.h"
 
 #define LOG_THIS theACPIController->
 
