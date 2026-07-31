@@ -1377,6 +1377,7 @@ void bx_init_hardware()
     BX_INSTR_INITIALIZE(i);
   }
 #endif
+  Bit32u VGACoreFrequency = (Bit32u) SIM->get_param_num(BXPN_VGA_CORE_FREQUENCY)->get();
 
   DEV_init_devices();
   // unload optional plugins which are unused and marked for removal
