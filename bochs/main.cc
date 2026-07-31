@@ -1377,7 +1377,7 @@ void bx_init_hardware()
     BX_INSTR_INITIALIZE(i);
   }
 #endif
-  
+
   DEV_init_devices();
   // unload optional plugins which are unused and marked for removal
   SIM->opt_plugin_ctrl("*", 0);
