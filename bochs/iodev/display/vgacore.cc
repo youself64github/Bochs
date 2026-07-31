@@ -101,6 +101,7 @@ void bx_vgacore_c::init(void)
 
   BX_VGA_THIS vga_ext = SIM->get_param_enum(BXPN_VGA_EXTENSION);
   BX_VGA_THIS pci_enabled = 0;
+  Bit32u ips = SIM->get_param_num("ips")->get();
   BX_VGA_THIS vgafrequency_hz = SIM->get_param_num("vga_core_freq", base)->get();
   BX_VGA_THIS vgalatency_ticks = (Bit32u) (ips / (Bit64u(vgafrequency_hz) * 1));
   BX_INFO(("VGA speed frequency = %u Hz, latency = %u CPU ticks per VGA access",
