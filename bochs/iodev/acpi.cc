@@ -69,6 +69,8 @@ const Bit8u acpi_sm_iomask[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 2, 0, 0, 0
 
 extern void apic_bus_deliver_smi(void);
 
+bx_acpi_ctrl_c bx_acpi;
+
 PLUGIN_ENTRY_FOR_MODULE(acpi)
 {
   if (mode == PLUGIN_INIT) {
