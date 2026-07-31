@@ -353,6 +353,8 @@ void bx_vga_c::update(void)
 {
   unsigned iHeight, iWidth;
 
+  BX_MEM_THIS consume_access_latency();
+  
   if (BX_VGA_THIS vbe.enabled) {
     /* no screen update necessary */
     if ((BX_VGA_THIS s.vga_mem_updated==0) && BX_VGA_THIS s.graphics_ctrl.graphics_alpha)
