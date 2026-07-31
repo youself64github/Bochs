@@ -34,8 +34,6 @@
 #include "pci.h"
 #include "acpi.h"
 #include "virt_timer.h"
-#include "gui/siminterface.h"
-#include "param_names.h"
 
 #define LOG_THIS theACPIController->
 
@@ -68,8 +66,6 @@ const Bit8u acpi_sm_iomask[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 2, 0, 0, 0
 #define ACPI_DISABLE 0xf0
 
 extern void apic_bus_deliver_smi(void);
-
-bx_acpi_ctrl_c bx_acpi;
 
 PLUGIN_ENTRY_FOR_MODULE(acpi)
 {
@@ -579,11 +575,6 @@ void bx_acpi_ctrl_c::timer()
   BX_ACPI_THIS pm_update_sci();
 }
 
-void bx_acpi_ctrl_c::set_ips(Bit64u new_ips)
-{
-  ips = new_ips;
-  BX_ACPI_THIS pm_update_sci();
-}
 
 // static pci configuration space write callback handler
 void bx_acpi_ctrl_c::pci_write_handler(Bit8u address, Bit32u value, unsigned io_len)
