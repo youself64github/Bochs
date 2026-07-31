@@ -22,6 +22,8 @@
 #include "bxversion.h"
 #include "iodev/iodev.h"
 #include "iodev/virt_timer.h"
+#include "iodev/acpi.h"
+#include "iodev/hpet.h"
 #include "iodev/hdimage/hdimage.h"
 #if BX_NETWORKING
 #include "iodev/network/netmod.h"
@@ -148,6 +150,8 @@ static Bit64s bx_param_handler(bx_param_c *param, bool set, Bit64s val)
       if (set && SIM->get_init_done()) {
         bx_pc_system.set_ips((Bit64u)val);
         bx_virt_timer.set_ips((Bit64u)val);
+        bx_acpi.set_ips((Bit64u)val);
+        bx_hpet.set_ips((Bit64u)val);
       }
     } else {
       BX_PANIC(("bx_param_handler called with unknown parameter '%s'", pname));
