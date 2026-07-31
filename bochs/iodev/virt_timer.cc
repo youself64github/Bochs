@@ -133,7 +133,6 @@ void bx_virt_timer_c::periodic(Bit64u time_passed, bool mode)
 {
   //Assert that we haven't skipped any events.
   BX_ASSERT (time_passed <= s[mode].timers_next_event_time);
-  BX_ASSERT(!in_timer_handler);
 
   //Update time variables.
   s[mode].timers_next_event_time -= time_passed;
